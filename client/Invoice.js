@@ -14,8 +14,30 @@ var LineItem = React.createClass({
   }
 });
 
+handleStripeToken: function(token) {
+      console.log('token', token);
+    },
+
 module.exports = React.createClass({
+
+  handleClick: function(e){
+      var invoice = this.props.model;
+      var description = 'Invoice #' + invoice.invoiceId
+      this._stripeCheckout.open({
+      name: 'Killer Store Front',
+      description: description,
+      amount: invoice.total
+    });
+    e.preventDefault();
+  },
+  
   render: function() {
+    this._stripeCheckout = StripeCheckout.configure({
+    key: 'pk_test_ERxBH00vFYSWUaWugnCfJZyQ',
+    image: '/img/mcs-logo-128x128.png',
+    locale: 'auto',
+    token: this.handleStripeToken
+  });
     var invoice = this.props.model;
     var invoiceId = invoice.invoiceId;
     var lineItemModels = invoice.lineItems;
@@ -70,6 +92,9 @@ module.exports = React.createClass({
             </tr>
           </tfoot>
         </table>
+        <div>
+        <button type="button" className="btn btn-default" onClick={this.handleClick}>Pay Now</button>
+        </div>
 
       </div>
     );
